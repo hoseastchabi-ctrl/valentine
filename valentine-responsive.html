@@ -1,0 +1,922 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Valentine UI - Ultimate Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #ffd6e7, #ffeef5);
+      overflow-x: hidden;
+      overflow-y: auto;
+      transition: background 0.6s ease;
+      padding: 15px;
+    }
+
+    body.celebrate {
+      background: linear-gradient(180deg, #ff9ac4, #ff3f86);
+    }
+
+    .heart, .rose {
+      position: absolute;
+      top: -50px;
+      font-size: 20px;
+      animation: fall linear infinite;
+      pointer-events: all;
+      z-index: 1;
+      cursor: pointer;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 30px 20px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      max-width: 450px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+      margin: auto;
+    }
+
+    .title { 
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(22px, 6vw, 28px);
+      margin-bottom: 8px;
+      color: #ff3f86;
+      line-height: 1.3;
+    }
+    
+    .subtitle { 
+      color: #888; 
+      margin-bottom: 15px;
+      font-size: clamp(14px, 3.5vw, 16px);
+    }
+    
+    .question { 
+      color: #ff3f86; 
+      font-weight: 600; 
+      font-size: clamp(17px, 4.5vw, 20px);
+      margin-bottom: 20px;
+      line-height: 1.5;
+      padding: 0 10px;
+    }
+
+    .attempt-counter {
+      font-size: clamp(13px, 3.5vw, 14px);
+      color: #ff6b9d;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      min-height: 100px;
+      width: 100%;
+      padding: 10px;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-size: clamp(16px, 4vw, 18px);
+      font-weight: 600;
+      position: relative;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .btn-no {
+      background: white;
+      border: 2px dashed #ff8db6;
+      color: #ff3f86;
+      position: absolute;
+      z-index: 3;
+      min-width: 100px;
+    }
+
+    .btn-no:hover {
+      border-style: solid;
+    }
+
+    .btn-no.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, #ff3f86, #ff6b9d);
+      color: white;
+      box-shadow: 0 5px 15px rgba(255, 63, 134, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+      z-index: 1;
+      min-width: 100px;
+    }
+
+    .btn-yes:hover {
+      box-shadow: 0 8px 20px rgba(255, 63, 134, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .btn-yes:active {
+      transform: scale(0.95);
+    }
+
+    .no-message {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ff3f86;
+      font-size: clamp(12px, 3vw, 14px);
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .no-message.show {
+      opacity: 1;
+    }
+
+    .trap-message {
+      font-size: clamp(14px, 3.5vw, 16px);
+      color: #ff3f86;
+      font-weight: 600;
+      margin-top: 10px;
+      display: none;
+      animation: shake 0.5s ease;
+      padding: 0 10px;
+    }
+
+    .success {
+      font-size: clamp(16px, 4vw, 18px);
+      color: #ff3f86;
+      font-weight: 600;
+      margin-top: 20px;
+      display: none;
+      line-height: 1.7;
+      animation: fadeIn 0.5s ease;
+      padding: 0 10px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .countdown {
+      margin-top: 20px;
+      padding: 15px;
+      background: linear-gradient(135deg, #ffe0ec, #fff5f8);
+      border-radius: 15px;
+      display: none;
+    }
+
+    .countdown-title {
+      font-size: clamp(14px, 3.5vw, 16px);
+      color: #ff3f86;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .countdown-timer {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .countdown-item {
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .countdown-value {
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: bold;
+      color: #ff3f86;
+      font-family: 'Pacifico', cursive;
+    }
+
+    .countdown-label {
+      font-size: clamp(10px, 2.5vw, 12px);
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .photo-gallery {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .photo-gallery-title {
+      font-size: clamp(16px, 4vw, 18px);
+      color: #ff3f86;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 8px;
+      margin-bottom: 15px;
+      max-width: 100%;
+    }
+
+    .photo-placeholder {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #ffe0ec, #fff5f8);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(24px, 6vw, 30px);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      touch-action: manipulation;
+    }
+
+    .photo-placeholder:hover,
+    .photo-placeholder:active {
+      transform: scale(1.05);
+    }
+
+    .share-btn {
+      margin-top: 15px;
+      padding: 10px 25px;
+      background: linear-gradient(135deg, #ff3f86, #ff6b9d);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: clamp(14px, 3.5vw, 16px);
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(255, 63, 134, 0.3);
+      transition: all 0.3s ease;
+      touch-action: manipulation;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .share-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 63, 134, 0.5);
+    }
+
+    .share-btn:active {
+      transform: scale(0.95);
+    }
+
+    .music-btn {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff3f86, #ff6b9d);
+      color: white;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(255, 63, 134, 0.4);
+      transition: all 0.3s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+    }
+
+    .music-btn:hover,
+    .music-btn:active {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(255, 63, 134, 0.6);
+    }
+
+    .music-btn.playing {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ff3f86;
+      pointer-events: none;
+      z-index: 3;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .mini-explosion {
+      position: absolute;
+      font-size: 14px;
+      animation: miniExplosion 0.6s ease-out forwards;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @keyframes miniExplosion {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 25px 15px;
+        border-radius: 15px;
+      }
+
+      .buttons {
+        gap: 12px;
+        min-height: 90px;
+      }
+
+      .btn {
+        padding: 10px 22px;
+      }
+
+      .photo-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .heart, .rose {
+        font-size: 18px;
+      }
+
+      .music-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        bottom: 12px;
+        right: 12px;
+      }
+    }
+
+    /* Very small screens */
+    @media (max-width: 360px) {
+      .card {
+        padding: 20px 12px;
+      }
+
+      .buttons {
+        gap: 10px;
+        min-height: 80px;
+      }
+
+      .btn {
+        padding: 8px 18px;
+        min-width: 85px;
+      }
+
+      .countdown-timer {
+        gap: 8px;
+      }
+
+      .countdown-item {
+        min-width: 50px;
+      }
+    }
+
+    /* Landscape orientation on mobile */
+    @media (max-height: 600px) and (orientation: landscape) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 20px 15px;
+      }
+
+      .title {
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      .question {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+
+      .buttons {
+        min-height: 70px;
+      }
+
+      .countdown {
+        padding: 12px;
+        margin-top: 15px;
+      }
+
+      .photo-gallery {
+        margin-top: 15px;
+      }
+    }
+
+    /* Prevent zoom on input focus (iOS) */
+    @media (max-width: 768px) {
+      select, textarea, input[type="text"], input[type="password"],
+      input[type="datetime"], input[type="datetime-local"],
+      input[type="date"], input[type="month"], input[type="time"],
+      input[type="week"], input[type="number"], input[type="email"],
+      input[type="url"] {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="title">Mon cœur...</div>
+    <div class="subtitle">J'ai une question super importante 😊</div>
+    <div class="question">Est-ce que tu veux être ma Valentine ? 💖</div>
+
+    <div class="attempt-counter" id="attemptCounter"></div>
+
+    <div class="buttons" id="buttons">
+      <button class="btn btn-no" id="noBtn">Non 😢</button>
+      <button class="btn btn-yes" id="yesBtn">Oui 💖</button>
+      <div class="no-message" id="noMessage"></div>
+    </div>
+
+    <div class="trap-message" id="trapMessage">
+      Tu n'as plus le choix maintenant ! 😈💕
+    </div>
+
+    <div class="success" id="successMsg">
+      Yayyy ! 🎉❤️<br>
+      Je savais que tu dirais oui !<br>
+      <strong>Rendez-vous le 14 février à 20h</strong><br>
+      en bas de chez nous.<br>
+      Fais-toi belle 💕✨
+    </div>
+
+    <div class="countdown" id="countdown">
+      <div class="countdown-title">⏰ Compte à rebours jusqu'à notre rendez-vous</div>
+      <div class="countdown-timer">
+        <div class="countdown-item">
+          <div class="countdown-value" id="days">0</div>
+          <div class="countdown-label">Jours</div>
+        </div>
+        <div class="countdown-item">
+          <div class="countdown-value" id="hours">0</div>
+          <div class="countdown-label">Heures</div>
+        </div>
+        <div class="countdown-item">
+          <div class="countdown-value" id="minutes">0</div>
+          <div class="countdown-label">Minutes</div>
+        </div>
+        <div class="countdown-item">
+          <div class="countdown-value" id="seconds">0</div>
+          <div class="countdown-label">Secondes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="photo-gallery" id="photoGallery">
+      <div class="photo-gallery-title">📸 Nos moments ensemble</div>
+      <div class="photo-grid">
+        <div class="photo-placeholder">💑</div>
+        <div class="photo-placeholder">💕</div>
+        <div class="photo-placeholder">🌹</div>
+        <div class="photo-placeholder">❤️</div>
+        <div class="photo-placeholder">😍</div>
+        <div class="photo-placeholder">💖</div>
+      </div>
+      <button class="share-btn" id="shareBtn">Partager notre amour 📤</button>
+    </div>
+  </div>
+
+  <!-- Music toggle button -->
+  <button class="music-btn" id="musicBtn" title="Cliquer pour la musique">🎵</button>
+
+  <script>
+    // Configuration
+    const MAX_HEARTS = 12;
+    const MAX_ATTEMPTS = 13;
+    let heartCount = 0;
+    let attempts = 0;
+    let useRoses = false;
+
+    const noMessages = [
+      "Tu es sûre ? 🥺",
+      "Réfléchis encore... 💔",
+      "Allez, dis oui ! 🙏",
+      "Je t'en supplie... 😭",
+      "Mon cœur se brise 💔",
+      "Une dernière chance ? 🥹",
+      "S'il te plaît... 🌹",
+      "Je ne peux plus attendre 😢",
+      "Tu me fais souffrir 😞",
+      "Je t'aime tellement 💕",
+      "Arrête de fuir mon amour 🥺",
+      "C'est ta dernière chance ! 💖",
+      "Je crois en nous... ❤️"
+    ];
+
+    // Background music - Using uploaded song
+    const bgMusic = new Audio('./RAYE_-_WHERE_IS_MY_HUSBAND___Official_Music_Video__256k_.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
+    let musicStarted = false;
+
+    function startMusic() {
+      if (!musicStarted) {
+        bgMusic.play().then(() => {
+          console.log('Musique démarrée avec succès');
+          musicStarted = true;
+          musicBtn.classList.add('playing');
+        }).catch(e => {
+          console.log('Erreur lecture musique:', e);
+        });
+      }
+    }
+
+    // Start music on any interaction
+    document.addEventListener('click', startMusic, { once: true });
+    document.addEventListener('touchstart', startMusic, { once: true });
+
+    // Elements
+    const noBtn = document.getElementById('noBtn');
+    const buttons = document.getElementById('buttons');
+    const yesBtn = document.getElementById('yesBtn');
+    const successMsg = document.getElementById('successMsg');
+    const noMessage = document.getElementById('noMessage');
+    const attemptCounter = document.getElementById('attemptCounter');
+    const trapMessage = document.getElementById('trapMessage');
+    const countdown = document.getElementById('countdown');
+    const photoGallery = document.getElementById('photoGallery');
+    const shareBtn = document.getElementById('shareBtn');
+    const musicBtn = document.getElementById('musicBtn');
+
+    // Generate falling hearts and roses
+    function createFallingItem() {
+      if (heartCount >= MAX_HEARTS) return;
+      
+      heartCount++;
+      const item = document.createElement('div');
+      
+      // Alternate between hearts and roses
+      if (useRoses && Math.random() > 0.5) {
+        item.classList.add('rose');
+        item.innerHTML = '🌹';
+      } else {
+        item.classList.add('heart');
+        item.innerHTML = '💖';
+      }
+      
+      item.style.left = Math.random() * window.innerWidth + 'px';
+      item.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      
+      // Easter egg: click on falling item for mini explosion
+      item.addEventListener('click', function(e) {
+        createMiniExplosion(e.clientX, e.clientY);
+        item.remove();
+        heartCount--;
+      });
+      
+      document.body.appendChild(item);
+      
+      setTimeout(() => {
+        if (item.parentNode) {
+          item.remove();
+          heartCount--;
+        }
+      }, 5000);
+    }
+    
+    setInterval(createFallingItem, 500);
+
+    // Mini explosion on click
+    function createMiniExplosion(x, y) {
+      for (let i = 0; i < 5; i++) {
+        const mini = document.createElement('div');
+        mini.classList.add('mini-explosion');
+        mini.innerHTML = '💕';
+        mini.style.left = x + 'px';
+        mini.style.top = y + 'px';
+        mini.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px)`;
+        document.body.appendChild(mini);
+        setTimeout(() => mini.remove(), 600);
+      }
+    }
+
+    function updateAttemptCounter() {
+      if (attempts > 0) {
+        attemptCounter.textContent = `Tentative ${attempts}/${MAX_ATTEMPTS}`;
+        attemptCounter.style.display = 'block';
+      }
+    }
+
+    function moveNoButton() {
+      const buttonRect = noBtn.getBoundingClientRect();
+      const containerRect = buttons.getBoundingClientRect();
+      
+      const maxX = containerRect.width - buttonRect.width - 20;
+      const maxY = 60;
+      
+      const x = Math.random() * Math.max(0, maxX);
+      const y = (Math.random() - 0.5) * maxY;
+      
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+
+      // Show random message
+      if (attempts < noMessages.length) {
+        noMessage.textContent = noMessages[attempts];
+        noMessage.classList.add('show');
+        setTimeout(() => noMessage.classList.remove('show'), 2000);
+      }
+
+      // Update counter
+      attempts++;
+      updateAttemptCounter();
+
+      // Make YES button bigger and NO button smaller
+      const yesScale = 1 + attempts * 0.15;
+      const noScale = Math.max(0.4, 1 - attempts * 0.1);
+      
+      yesBtn.style.transform = `scale(${yesScale})`;
+      noBtn.style.transform = `scale(${noScale})`;
+
+      // TRAP MODE: Hide NO button after MAX_ATTEMPTS
+      if (attempts >= MAX_ATTEMPTS) {
+        noBtn.classList.add('hidden');
+        trapMessage.style.display = 'block';
+        useRoses = true; // Switch to roses
+      }
+    }
+
+    // Event listeners for NO button
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    noBtn.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      moveNoButton();
+    });
+    
+    noBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    // Create confetti
+    function createConfetti() {
+      const colors = ['#ff3f86', '#ff6b9d', '#ffa8c5', '#ffd6e7', '#fff', '#ffd700'];
+      const confettiCount = window.innerWidth < 480 ? 60 : 100;
+      
+      for(let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.classList.add('confetti');
+          confetti.style.left = Math.random() * window.innerWidth + 'px';
+          confetti.style.top = '-20px';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+          confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+          document.body.appendChild(confetti);
+          
+          setTimeout(() => confetti.remove(), 4000);
+        }, i * 30);
+      }
+    }
+
+    // Countdown timer
+    function startCountdown() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const valentinesDate = new Date(currentYear, 1, 14, 20, 0, 0); // Feb 14, 8 PM
+      
+      // If Valentine's Day has passed this year, use next year
+      if (now > valentinesDate) {
+        valentinesDate.setFullYear(currentYear + 1);
+      }
+
+      function updateCountdown() {
+        const now = new Date();
+        const diff = valentinesDate - now;
+
+        if (diff <= 0) {
+          document.getElementById('days').textContent = '0';
+          document.getElementById('hours').textContent = '0';
+          document.getElementById('minutes').textContent = '0';
+          document.getElementById('seconds').textContent = '0';
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('days').textContent = days;
+        document.getElementById('hours').textContent = hours;
+        document.getElementById('minutes').textContent = minutes;
+        document.getElementById('seconds').textContent = seconds;
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    // Vibration (if supported)
+    function vibrate() {
+      if ('vibrate' in navigator) {
+        navigator.vibrate([300, 100, 300, 100, 300, 100, 500]);
+      }
+    }
+
+    // YES click effect
+    yesBtn.addEventListener('click', function(){
+      // VIBRATE ON YES CLICK
+      vibrate();
+
+      // Start music if not started
+      startMusic();
+
+      // Hide buttons and messages
+      buttons.style.display = 'none';
+      attemptCounter.style.display = 'none';
+      trapMessage.style.display = 'none';
+      
+      // Show success message
+      successMsg.style.display = 'block';
+      document.body.classList.add('celebrate');
+
+      // Show countdown
+      countdown.style.display = 'block';
+      startCountdown();
+
+      // Show photo gallery
+      setTimeout(() => {
+        photoGallery.style.display = 'block';
+      }, 1000);
+
+      // Heart explosion (reduced for mobile)
+      const heartCount = window.innerWidth < 480 ? 30 : 50;
+      for(let i = 0; i < heartCount; i++){
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('heart');
+          heart.innerHTML = '💖';
+          heart.style.left = Math.random() * window.innerWidth + 'px';
+          heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+          heart.style.animationDuration = (Math.random() * 2 + 1) + 's';
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 4000);
+        }, i * 50);
+      }
+
+      // Confetti
+      createConfetti();
+    });
+
+    // Share button
+    shareBtn.addEventListener('click', async function() {
+      const shareData = {
+        title: 'Elle a dit OUI ! 💖',
+        text: 'Ma Valentine a accepté mon invitation ! ❤️ #ValentinesDay #Love',
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch (err) {
+          console.log('Partage annulé');
+        }
+      } else {
+        // Fallback: copy to clipboard
+        const text = shareData.title + '\n' + shareData.text;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            shareBtn.textContent = '✓ Copié !';
+            setTimeout(() => {
+              shareBtn.textContent = 'Partager notre amour 📤';
+            }, 2000);
+          });
+        }
+      }
+    });
+
+    // Photo placeholders click effect
+    document.querySelectorAll('.photo-placeholder').forEach(photo => {
+      photo.addEventListener('click', function() {
+        this.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 300);
+      });
+    });
+
+    // Music button toggle
+    let isPlaying = false;
+
+    musicBtn.addEventListener('click', function() {
+      if (!musicStarted) {
+        startMusic();
+        musicBtn.textContent = '🎵';
+        isPlaying = true;
+      } else {
+        if (bgMusic.paused) {
+          bgMusic.play();
+          musicBtn.classList.add('playing');
+          musicBtn.textContent = '🎵';
+          isPlaying = true;
+        } else {
+          bgMusic.pause();
+          musicBtn.classList.remove('playing');
+          musicBtn.textContent = '🔇';
+          isPlaying = false;
+        }
+      }
+    });
+
+    // Prevent scrolling issues on mobile
+    document.addEventListener('touchmove', function(e) {
+      if (e.target.closest('.btn, .photo-placeholder, .share-btn, .music-btn')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  </script>
+
+</body>
+</html>
